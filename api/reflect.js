@@ -87,7 +87,7 @@ Die Nutzerperspektive steht immer im Mittelpunkt – das Reflecting Team reflekt
 
     // Sende die Anfrage an die OpenAI API
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o", // Das neueste und leistungsfähigste Modell
+      model: "gpt-4.1", // Das neueste und leistungsfähigste Modell
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: message }
