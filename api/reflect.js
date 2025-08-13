@@ -23,6 +23,8 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log("Ankommender Request-Body:", JSON.stringify(req.body, null, 2)); // Das ist die neue Zeile
+    // KORREKTUR: Erwartet das 'messages'-Array vom Frontend
     // Hole die Nachricht des Nutzers aus dem Body der Anfrage.
     // Wir erwarten ein JSON-Objekt wie { "message": "Benutzernachricht..." }
     const { message } = req.body;
