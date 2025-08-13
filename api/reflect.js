@@ -12,24 +12,19 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
-
+  
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
   try {
-    // === DIE ENTSCHEIDENDE KORREKTUR ===
-    // Wir "öffnen" den ankommenden Datenstrom und wandeln ihn in ein JavaScript-Objekt um.
-    const body = JSON.parse(req.body); 
-    
-    // Wir greifen jetzt auf das geöffnete "body"-Objekt zu, nicht mehr auf req.body direkt.
-    const { messages } = body; 
+    // Hier greifen wir direkt auf req.body zu, da Vercel es für uns parst.
+    const { messages } = req.body;
 
     if (!messages || messages.length === 0) {
       return res.status(400).json({ error: 'Kein Nachrichtenverlauf im Body gefunden.' });
     }
 
-    // Ihr Systemprompt
     const systemPrompt = `Du bist ein vielseitiger Assistent, der ein Reflecting Team simuliert. // HIER IHREN VOLLSTÄNDIGEN SYSTEMPROMPT EINFÜGEN //
     WICHTIG: Formatiere deine Antworten IMMER mit einem Sprecher-Kürzel am Anfang (z.B. "M: ", "P: ", "BW: "), damit das Frontend die Sprecher visuell unterscheiden kann. Halte dich exakt an den Ablauf. Nutze die Phasen-Marker (z.B. "Phase 2/5") in deinen Antworten.`;
 
@@ -48,3 +43,12 @@ export default async function handler(req, res) {
     res.status(500).json({ error: 'Fehler bei der Kommunikation mit der KI.' });
   }
 }
+
+// === WICHTIGE NEUE KONFIGURATION ===
+// Diese Zeile sagt Vercel, dass es den Body der Anfrage nicht als Stream,
+// sondern als geparstes JSON-Objekt zur Verfügung stellen soll.
+export const config = {
+  api: {
+    bodyParser: true,
+  },
+};
