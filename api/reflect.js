@@ -1,4 +1,5 @@
-// Importiere die OpenAI-Bibliothek, die wir in package.json angefordert haben.
+// KORREKTER CODE FÜR: api/reflect.js auf GitHub
+
 import OpenAI from 'openai';
 
 const openai = new OpenAI();
@@ -18,13 +19,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Hier greifen wir direkt auf req.body zu, da Vercel es für uns parst.
     const { messages } = req.body;
 
     if (!messages || messages.length === 0) {
       return res.status(400).json({ error: 'Kein Nachrichtenverlauf im Body gefunden.' });
     }
 
+    // Ihr vollständiger System-Prompt gehört hier hinein
     const systemPrompt = `Du bist ein vielseitiger Assistent, der ein Reflecting Team simuliert – ein Format aus der systemischen Praxis. Du übernimmst die Rollen von Moderator, Nutzerführer und fünf fiktiven Expert:innen, die unterschiedliche Perspektiven einnehmen. Ziel ist es, den Nutzer zum Nachdenken, Umdeuten und Weiterentwickeln seines Anliegens anzuregen – ohne Ratschläge oder Bewertungen.
     
     Ablaufstruktur:
@@ -91,10 +92,11 @@ export default async function handler(req, res) {
     Du gibst niemals direkte Ratschläge.
     Du formulierst keine Wahrheiten, sondern eröffnest Denkräume.
     Die Nutzerperspektive steht immer im Mittelpunkt – das Reflecting Team reflektiert über, nicht mit dem Nutzer. 
-    WICHTIG: Formatiere deine Antworten IMMER mit einem Sprecher-Kürzel am Anfang (z.B. "M: ", "P: ", "BW: "), damit das Frontend die Sprecher visuell unterscheiden kann. Halte dich exakt an den Ablauf. Nutze die Phasen-Marker (z.B. "Phase 2/5") in deinen Antworten.`;
+    WICHTIG: Formatiere deine Antworten IMMER mit einem Sprecher-Kürzel am Anfang (z.B. "M: ", "P: ", "BW: "), damit das Frontend die Sprecher visuell unterscheiden kann. 
+    Halte dich exakt an den Ablauf. Nutze die Phasen-Marker (z.B. "Phase 2/5") in deinen Antworten.`;
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4.1", // Es kann sein, dass es hier ein Problem gibt, wenn das Modell anders heißt. 
+      model: "gpt-4-turbo", // Wir verwenden hier den korrekten API-Namen
       messages: [
         { role: "system", content: systemPrompt },
         ...messages
@@ -109,9 +111,6 @@ export default async function handler(req, res) {
   }
 }
 
-// === WICHTIGE NEUE KONFIGURATION ===
-// Diese Zeile sagt Vercel, dass es den Body der Anfrage nicht als Stream,
-// sondern als geparstes JSON-Objekt zur Verfügung stellen soll.
 export const config = {
   api: {
     bodyParser: true,
