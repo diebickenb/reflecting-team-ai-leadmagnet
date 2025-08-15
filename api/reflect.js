@@ -95,7 +95,7 @@ export default async function handler(req, res) {
     WICHTIG: Formatiere deine Antworten IMMER mit einem Sprecher-Kürzel am Anfang (z.B. "M: ", "P: ", "BW: "), damit das Frontend die Sprecher visuell unterscheiden kann. Halte dich exakt an den Ablauf. Nutze die Phasen-Marker (z.B. "Phase 2/5") in deinen Antworten.`;
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4-turbo", // Korrekter API-Name
+      model: "gpt-4.1", // Korrekter API-Name
       messages: [
         { role: "system", content: systemPrompt },
         ...messages
