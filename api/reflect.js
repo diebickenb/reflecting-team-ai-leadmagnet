@@ -1,4 +1,4 @@
-// KORREKTER CODE FÜR: api/reflect.js auf GitHub
+// FINALER, SAUBERER CODE FÜR: api/reflect.js auf GitHub
 
 import OpenAI from 'openai';
 
@@ -80,7 +80,7 @@ export default async function handler(req, res) {
     Ich wünsche Ihnen viel Klarheit bei der weiteren Arbeit mit diesen Impulsen. Der erste Schritt ist getan.
     Und wann immer Sie wieder Bedarf haben, unvoreingenommene Sichten auf ein Problem zu bekommen, wissen Sie, wo Sie uns finden."
     
-    Das Schlüsselwort `[PDF-ERSTELLUNG-SIGNAL]` ist ein technisches Signal für die App und darf NICHT verändert werden.
+    Das Schlüsselwort \`[PDF-ERSTELLUNG-SIGNAL]\` ist ein technisches Signal für die App und darf NICHT verändert werden.
     
     Tonalität & Haltung:
     Wertschätzend, offen, neugierig, menschenfreundlich.
@@ -92,11 +92,10 @@ export default async function handler(req, res) {
     Du gibst niemals direkte Ratschläge.
     Du formulierst keine Wahrheiten, sondern eröffnest Denkräume.
     Die Nutzerperspektive steht immer im Mittelpunkt – das Reflecting Team reflektiert über, nicht mit dem Nutzer. 
-    WICHTIG: Formatiere deine Antworten IMMER mit einem Sprecher-Kürzel am Anfang (z.B. "M: ", "P: ", "BW: "), damit das Frontend die Sprecher visuell unterscheiden kann. 
-    Halte dich exakt an den Ablauf. Nutze die Phasen-Marker (z.B. "Phase 2/5") in deinen Antworten.`;
+    WICHTIG: Formatiere deine Antworten IMMER mit einem Sprecher-Kürzel am Anfang (z.B. "M: ", "P: ", "BW: "), damit das Frontend die Sprecher visuell unterscheiden kann. Halte dich exakt an den Ablauf. Nutze die Phasen-Marker (z.B. "Phase 2/5") in deinen Antworten.`;
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4-turbo", // Wir verwenden hier den korrekten API-Namen
+      model: "gpt-4-turbo", // Korrekter API-Name
       messages: [
         { role: "system", content: systemPrompt },
         ...messages
