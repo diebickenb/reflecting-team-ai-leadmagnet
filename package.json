@@ -4,5 +4,6 @@
     "@sparticuz/chromium": "^123.0.1",
     "puppeteer-core": "^22.10.0",
     "@vercel/kv": "^1.0.1"
+    "@vercel/ratelimit": "^1.3.1"
   }
 }
