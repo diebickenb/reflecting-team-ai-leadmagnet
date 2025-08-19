@@ -1,7 +1,7 @@
 import chromium from '@sparticuz/chromium';
 import puppeteer from 'puppeteer-core';
 
-// NEU: Sicherheitsfunktion zum Entschärfen von HTML-Sonderzeichen
+// Sicherheitsfunktion zum Entschärfen von HTML-Sonderzeichen
 const escapeHtml = (unsafe) => {
   if (!unsafe) return '';
   return unsafe
@@ -44,7 +44,6 @@ function conversationToHtml(conversation) {
       }
     }
     
-    // GEÄNDERT: escapeHtml wird auf alle variablen Inhalte angewendet
     const speakerHtml = speakerName ? `<span class="speaker-name">${escapeHtml(speakerName)}</span>` : '';
     html += `
       <div class="message ${escapeHtml(msg.role)}">
@@ -60,6 +59,13 @@ function conversationToHtml(conversation) {
 
 
 export default async function handler(req, res) {
+  // Der manuelle CORS-Header Block wurde hier entfernt.
+  // Diese Aufgabe übernimmt jetzt die vercel.json Datei.
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
