@@ -1,6 +1,17 @@
 import chromium from '@sparticuz/chromium';
 import puppeteer from 'puppeteer-core';
 
+// NEU: Sicherheitsfunktion zum Entschärfen von HTML-Sonderzeichen
+const escapeHtml = (unsafe) => {
+  if (!unsafe) return '';
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+};
+
 // Hilfsfunktion zum Umwandeln des Chatverlaufs in HTML
 function conversationToHtml(conversation) {
   let html = `
@@ -33,11 +44,12 @@ function conversationToHtml(conversation) {
       }
     }
     
-    const speakerHtml = speakerName ? `<span class="speaker-name">${speakerName}</span>` : '';
+    // GEÄNDERT: escapeHtml wird auf alle variablen Inhalte angewendet
+    const speakerHtml = speakerName ? `<span class="speaker-name">${escapeHtml(speakerName)}</span>` : '';
     html += `
-      <div class="message ${msg.role}">
+      <div class="message ${escapeHtml(msg.role)}">
         ${speakerHtml}
-        <div class="content">${content}</div>
+        <div class="content">${escapeHtml(content)}</div>
       </div>
     `;
   });
