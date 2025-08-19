@@ -13,7 +13,7 @@ export default async function handler(req, res) {
   // --- ROBUSTE CORS-BEHANDLUNG (GEMÄSS REVIEW) ---
   // Wir setzen die Header bei JEDER Anfrage, um maximale Kompatibilität zu gewährleisten.
   // Die Sicherheit (wer zugreifen darf) wird durch die vercel.json sichergestellt.
-  res.setHeader('Access-Control-Allow-Origin', 'https://IHRE-WORDPRESS-DOMAIN.DE'); // Passen Sie dies an Ihre Domain an!
+  res.setHeader('Access-Control-Allow-Origin', 'https://www.dieterbickenbach.de/das-reflecting-team-im-resonanzgarten/'); // Passen Sie dies an Ihre Domain an!
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
