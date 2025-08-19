@@ -1,7 +1,8 @@
 {
   "dependencies": {
-    "@vercel/blob": "^0.23.2",
-    "openai": "^4.0.0"
-  },
-  "type": "module"
+    "openai": "^4.20.1",
+    "@sparticuz/chromium": "^123.0.1",
+    "puppeteer-core": "^22.10.0",
+    "@vercel/kv": "^1.0.1"
+  }
 }
