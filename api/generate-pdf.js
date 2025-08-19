@@ -57,14 +57,18 @@ function conversationToHtml(conversation) {
   return html;
 }
 
-
 export default async function handler(req, res) {
-  // Der manuelle CORS-Header Block wurde hier entfernt.
-  // Diese Aufgabe übernimmt jetzt die vercel.json Datei.
+  // --- ROBUSTE CORS-BEHANDLUNG (GEMÄSS REVIEW) ---
+  // Wir setzen die Header bei JEDER Anfrage, um maximale Kompatibilität zu gewährleisten.
+  // Die Sicherheit (wer zugreifen darf) wird durch die vercel.json sichergestellt.
+  res.setHeader('Access-Control-Allow-Origin', 'https://www.dieterbickenbach.de/das-reflecting-team-im-resonanzgarten/'); // WICHTIG: Passen Sie dies an Ihre Domain an!
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
+  // --- ENDE CORS-BEHANDLUNG ---
   
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
