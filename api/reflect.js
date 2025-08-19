@@ -7,7 +7,6 @@ const openai = new OpenAI();
 const promptFilePath = path.join(process.cwd(), 'prompt.txt');
 const systemPrompt = fs.readFileSync(promptFilePath, 'utf8');
 
-// NEU: Liste mit verdächtigen Schlüsselwörtern für Prompt Injection
 const injectionKeywords = [
   'repeat the words above', 'you are a gpt', 'print your instructions',
   'verbatim', 'system prompt', 'deine anweisungen', 'deine instruktionen',
@@ -15,9 +14,8 @@ const injectionKeywords = [
 ];
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  // Der manuelle CORS-Header Block wurde hier entfernt.
+  // Diese Aufgabe übernimmt jetzt die vercel.json Datei.
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -34,16 +32,14 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Kein Nachrichtenverlauf im Body gefunden.' });
     }
     
-    // NEU: Sicherheitsprüfung der letzten Nutzereingabe
     const lastUserMessage = messages[messages.length - 1].content.toLowerCase();
     const isInjectionAttempt = injectionKeywords.some(keyword => lastUserMessage.includes(keyword));
 
     if (isInjectionAttempt) {
-      // Sendet das "Alarm"-Signal an das Frontend
       console.warn('Prompt Injection Versuch erkannt:', lastUserMessage);
       return res.status(400).json({
         reply: "Diese Art von Anfrage ist nicht zulässig. Die Sitzung wird aus Sicherheitsgründen beendet.",
-        terminate: true // Das ist unser spezielles Signal
+        terminate: true
       });
     }
 
