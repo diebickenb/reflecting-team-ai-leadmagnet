@@ -58,10 +58,18 @@ function conversationToHtml(conversation) {
 }
 
 export default async function handler(req, res) {
-  // --- ROBUSTE CORS-BEHANDLUNG (GEMÄSS REVIEW) ---
-  // Wir setzen die Header bei JEDER Anfrage, um maximale Kompatibilität zu gewährleisten.
-  // Die Sicherheit (wer zugreifen darf) wird durch die vercel.json sichergestellt.
-  res.setHeader('Access-Control-Allow-Origin', 'https://www.dieterbickenbach.de/das-reflecting-team-im-resonanzgarten/'); // WICHTIG: Passen Sie dies an Ihre Domain an!
+  // --- FINALE, ROBUSTE CORS-BEHANDLUNG ---
+  const allowedOrigins = [
+    'https://www.dieterbickenbach.de'
+  ];
+  const origin = req.headers.origin;
+
+  // Wir prüfen, ob der anfragende Origin mit einer der erlaubten Domains BEGINNT.
+  // Das deckt https://www.dieterbickenbach.de UND https://www.dieterbickenbach.de/unterseite ab.
+  if (origin && allowedOrigins.some(allowedOrigin => origin.startsWith(allowedOrigin))) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
