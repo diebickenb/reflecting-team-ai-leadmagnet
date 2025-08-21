@@ -31,11 +31,9 @@ function conversationToHtml(conversation) {
       <body>
         <h1>Resonanz-Bericht</h1>
   `;
-
   conversation.forEach(msg => {
     let speakerName = '';
     let content = msg.content;
-    
     if (msg.role === 'assistant') {
       const styleMatch = content.match(/^(\S+:\s*)?\[(.*?)\]\s*\[(.*?)\]\s*/);
       if (styleMatch) {
@@ -43,40 +41,26 @@ function conversationToHtml(conversation) {
         content = content.substring(styleMatch[0].length).trim();
       }
     }
-    
     const speakerHtml = speakerName ? `<span class="speaker-name">${escapeHtml(speakerName)}</span>` : '';
-    html += `
-      <div class="message ${escapeHtml(msg.role)}">
-        ${speakerHtml}
-        <div class="content">${escapeHtml(content)}</div>
-      </div>
-    `;
+    html += `<div class="message ${escapeHtml(msg.role)}">${speakerHtml}<div class="content">${escapeHtml(content)}</div></div>`;
   });
-
   html += '</body></html>';
   return html;
 }
 
 export default async function handler(req, res) {
-  // --- FINALE, ROBUSTE CORS-BEHANDLUNG ---
-  const allowedOrigins = [
-    'https://www.dieterbickenbach.de'
-  ];
+  // Der robuste CORS-Block
+  const allowedOrigins = [ 'https://www.dieterbickenbach.de' ];
   const origin = req.headers.origin;
-
-  // Wir prüfen, ob der anfragende Origin mit einer der erlaubten Domains BEGINNT.
-  // Das deckt https://www.dieterbickenbach.de UND https://www.dieterbickenbach.de/unterseite ab.
   if (origin && allowedOrigins.some(allowedOrigin => origin.startsWith(allowedOrigin))) {
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
-
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
-  // --- ENDE CORS-BEHANDLUNG ---
   
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
@@ -87,32 +71,44 @@ export default async function handler(req, res) {
     if (!conversation || conversation.length === 0) {
       return res.status(400).json({ error: 'Kein Gesprächsverlauf empfangen.' });
     }
-
+    
+    // Die verbesserten Start-Argumente aus dem Review
     const browser = await puppeteer.launch({
-      args: chromium.args,
+      args: [
+        ...chromium.args,
+        '--disable-gpu',
+        '--disable-dev-shm-usage',
+        '--disable-setuid-sandbox',
+        '--no-sandbox'
+      ],
       defaultViewport: chromium.defaultViewport,
       executablePath: await chromium.executablePath(),
       headless: chromium.headless,
     });
-
+    
     const page = await browser.newPage();
     const htmlContent = conversationToHtml(conversation);
     await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
-
+    
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
       margin: { top: '20mm', right: '20mm', bottom: '20mm', left: '20mm' },
     });
-
+    
     await browser.close();
-
+    
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename=Resonanz-Bericht.pdf');
     res.status(200).send(pdfBuffer);
-
+    
   } catch (error) {
-    console.error("Fehler bei PDF-Erstellung:", error);
+    console.error("Detaillierter Fehler bei PDF-Erstellung:", error);
     res.status(500).json({ error: 'PDF konnte nicht erstellt werden.' });
   }
 }
+
+// Die erhöhte Ausführungszeit aus dem Review
+export const config = {
+  maxDuration: 30, 
+};
