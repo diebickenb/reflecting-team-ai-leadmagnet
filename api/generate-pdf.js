@@ -37,30 +37,36 @@ function extractTextFromMessage(message) {
 }
 
 export default async function handler(req, res) {
-  // Der robuste CORS-Block bleibt unverändert
-  const allowedOrigins = [ 'https://www.dieterbickenbach.de' ];
-  const origin = req.headers.origin;
-  if (origin && allowedOrigins.some(allowedOrigin => origin.startsWith(allowedOrigin))) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  // --- CORS (robuster) ---
+  const origin = req.headers.origin || "";
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+  // Erlaube deine Domains (ergänze bei Bedarf)
+  const allowed = [
+    "https://www.dieterbickenbach.de",
+    "https://reflecting-team-ai-leadmagnet.vercel.app",
+    "http://localhost:3000",
+  ];
+
+  // Header setzen, wenn die anfragende Seite erlaubt ist
+  if (origin && (allowed.includes(origin) || origin.endsWith(".vercel.app"))) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
   }
-  
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
+  res.setHeader("Vary", "Origin"); // wichtig für Caches/CDN
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Max-Age", "86400"); // Preflight 24h merken
+
+  // Preflight (Vorabfrage) kurz erlauben und beenden
+  if (req.method === "OPTIONS") {
+    return res.status(204).end(); // 204 statt 200
   }
 
-  try {
-    const { conversation } = req.body;
-    if (!conversation || conversation.length === 0) {
-      return res.status(400).json({ error: 'Kein Gesprächsverlauf empfangen.' });
-    }
+  // Nur POST zulassen
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method Not Allowed" });
+  }
 
-    // --- NEUE PDF-ERSTELLUNG MIT jsPDF ---
+  // --- NEUE PDF-ERSTELLUNG MIT jsPDF ---
     const doc = new jsPDF();
     const margin = 15;
     const pageWidth = doc.internal.pageSize.getWidth();
