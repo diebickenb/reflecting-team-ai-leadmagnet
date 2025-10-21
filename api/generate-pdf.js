@@ -1,3 +1,20 @@
+// --- CORS & Preflight-Fix (oben einfügen) ---
+const ALLOWED_ORIGIN = process.env.NEXT_PUBLIC_SITE_URL || "*"; // optional: deine Domain einsetzen
+
+function setCors(res) {
+  res.setHeader("Access-Control-Allow-Origin", ALLOWED_ORIGIN);
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Max-Age", "86400");
+}
+
+// Falls der Browser nur "darf ich?" fragt (Preflight), hier kurz erlauben:
+export async function OPTIONS(req, res) {
+  setCors(res);
+  res.status(204).end(); // 204 = "alles gut, kein Inhalt"
+}
+// --- Ende CORS-Block ---
+
 import { jsPDF } from "jspdf";
 
 // Diese Hilfsfunktionen werden für die Text-Extraktion benötigt
